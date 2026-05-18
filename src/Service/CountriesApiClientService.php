@@ -27,7 +27,7 @@ class CountriesApiClientService
                 $this->countriesApiUrl . '/all',
                 [
                     'query' => [
-                        'fields' => 'name,capital,population'
+                        'fields' => 'name,capital,population,cca2,latlng'
                     ]
                 ]
             );

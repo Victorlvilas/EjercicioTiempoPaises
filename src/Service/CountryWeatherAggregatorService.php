@@ -31,8 +31,9 @@ class CountryWeatherAggregatorService
                 $poblacion = $pais['population'];
                 $tiempoCapital =   $this->weatherApi->getWeatherByCity($capital);
                 $temperatura = $tiempoCapital['main']['temp'];
+                $cca2 = $pais['cca2'];
 
-                $arrayPaises[] = ['country' => $nombrePais, 'capital' => $capital, 'population' => $poblacion, 'temperature' => $temperatura];
+                $arrayPaises[] = ['country' => $nombrePais, 'capital' => $capital, 'population' => $poblacion, 'temperature' => $temperatura, 'code' => $cca2];
             }
             return $arrayPaises;
         } catch (ClientExceptionInterface $e) {
