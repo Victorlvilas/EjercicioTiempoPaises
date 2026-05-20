@@ -2,12 +2,15 @@
 
 namespace App\Controller;
 
+use App\Repository\CapitalWeatherMeasurementRepository;
+use App\Repository\CountryRepository;
 use App\Service\CountriesApiClientService;
 use App\Service\CountryWeatherAggregatorService;
 use App\Service\LibrosService;
 use App\Service\WeatherApiClientService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
@@ -93,11 +96,38 @@ final class ApiDemoController extends AbstractController
         return $this->json($response);
     }
 
-
     #[Route('/countries/top5', name: 'ejemplo7')]
     public function ejemplo7(CountryWeatherAggregatorService $countriesWeatherService): JsonResponse
     {
         $response = $countriesWeatherService->getCountriesWithWeather();
         return $this->json($response);
+    }
+
+    // PRIMERO la ruta específica
+    #[Route('/countries/min-population', name: 'ejemploMinPopulation')]
+    public function getCountryWithMinPopulation(CountryRepository $countryRepository): JsonResponse
+    {
+        $country = $countryRepository->findCountryWithMinPopulation();
+        if (!$country) {
+            return $this->json(['error' => 'No countries found'], Response::HTTP_NOT_FOUND);
+        }
+        return $this->json($country);
+    }
+
+    #[Route('/countries/top-temperatures/{limit}', name: 'ejemploTopTemperatures')]
+    public function getTopCapitalsByTemperature(
+        CapitalWeatherMeasurementRepository $repo,
+        int $limit
+    ): JsonResponse {
+        $results = $repo->findTopCapitalsByMaxTemperature($limit);
+        return $this->json($results);
+    }
+
+    // DESPUÉS la ruta genérica con parámetro
+    #[Route('/countries/{limit}', name: 'ejemploLeaflet')]
+    public function getTopLocalCountriesByPopulation(CountryRepository $countryRepository, int $limit): JsonResponse
+    {
+        $countries = $countryRepository->findTopCountries($limit);
+        return $this->json($countries);
     }
 }

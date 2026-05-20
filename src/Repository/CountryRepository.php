@@ -16,6 +16,29 @@ class CountryRepository extends ServiceEntityRepository
         parent::__construct($registry, Country::class);
     }
 
+    public function findTopCountries(int $limit = 5): array
+    {
+
+        return $this->createQueryBuilder('c')
+
+            ->orderBy('c.population', 'DESC')
+
+            ->setMaxResults($limit)
+
+            ->getQuery()
+
+            ->getResult();
+    }
+
+    public function findCountryWithMinPopulation(): ?Country
+    {
+        return $this->createQueryBuilder('c')
+            ->orderBy('c.population', 'ASC')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
     //    /**
     //     * @return Country[] Returns an array of Country objects
     //     */

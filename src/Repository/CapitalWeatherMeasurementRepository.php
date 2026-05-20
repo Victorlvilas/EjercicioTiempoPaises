@@ -16,6 +16,18 @@ class CapitalWeatherMeasurementRepository extends ServiceEntityRepository
         parent::__construct($registry, CapitalWeatherMeasurement::class);
     }
 
+    public function findTopCapitalsByMaxTemperature(int $limit): array
+    {
+        return $this->createQueryBuilder('m')
+            ->select('c.capital', 'MAX(m.temperature) as maxTemperature', 'MAX(m.weatherLat) as weatherLat', 'MAX(m.weatherLng) as weatherLng')
+            ->join('m.country', 'c')
+            ->groupBy('c.capital')
+            ->orderBy('maxTemperature', 'DESC')
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
+    }
+
     //    /**
     //     * @return CapitalWeatherMeasurement[] Returns an array of CapitalWeatherMeasurement objects
     //     */
